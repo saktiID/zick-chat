@@ -10,6 +10,7 @@ const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-
 // const API_URL = ` https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${API_KEY}`;
 const userData = {
   message: null,
+  chatHistory: [],
 };
 
 const createMessageElement = (messageContent, classes) => {
@@ -28,11 +29,12 @@ const generateResponse = async (incomingMessageDiv) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      contents: [
-        {
-          parts: [{ text: userData.message }],
-        },
-      ],
+      // contents: [
+      //   {
+      //     parts: [{ text: userData.message }],
+      //   },
+      // ],
+      contents: userData.chatHistory,
       system_instruction: {
         parts: {
           text: "Anda adalah Assistane, nama Anda adalah Zick. Anda dikembangkan oleh Romosakti dengan url instagram https://www.instagram.com/ach.m4d22/ di kota Sidoarjo dan diberdayakan oleh Gemini dari Google",
@@ -46,8 +48,17 @@ const generateResponse = async (incomingMessageDiv) => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error.message);
     const apiResponse = data.candidates[0].content.parts[0].text;
-    messageElement.innerText = apiResponse;
+    const htmlContent = marked.parse(apiResponse);
+    messageElement.innerHTML = htmlContent;
     messageElement.classList.remove("thinking");
+
+    // Handle conversation history
+    const conversation = {
+      role: "model",
+      parts: [{ text: apiResponse }],
+    };
+    userData.chatHistory.push(conversation);
+
     // Scroll to the bottom of the chat body
     chatBody.scrollTop = chatBody.scrollHeight;
   } catch (error) {
@@ -63,6 +74,18 @@ const handleOutgoingMessage = (e) => {
   const outgoingMessageDiv = createMessageElement(messageContent, "chat-message-right");
   outgoingMessageDiv.querySelector(".chat-message-content").textContent = userData.message;
   chatBody.appendChild(outgoingMessageDiv);
+
+  // Handle conversation history
+  const conversation = {
+    role: "user",
+    parts: [{ text: userData.message }],
+  };
+  userData.chatHistory.push(conversation);
+
+  // Handle overload conversation
+  if (userData.chatHistory.length > 30) {
+    userData.chatHistory.shift();
+  }
 
   // Handle incoming message
   setTimeout(() => {

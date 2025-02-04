@@ -79,8 +79,8 @@ body {
 }
 
 .chat-avatar {
-  width: 30px;
-  height: 30px;
+  width: 2.5em;
+  height: 2.5em;
   border-radius: 50%;
   background-color: #fff;
   margin-right: 10px;
@@ -89,7 +89,7 @@ body {
 }
 
 .chat-avatar svg {
-  width: 15px;
+  width: 1.5em;
   fill: #3307f9;
 }
 
@@ -152,6 +152,11 @@ body {
   border-radius: 0 5px 5px 5px;
   width: max-content;
   max-width: 95%;
+  white-space: pre-wrap;
+}
+
+.chat-message-right .chat-message-content {
+  white-space: pre-wrap;
 }
 
 .chat-message-content.thinking .dot {
@@ -215,6 +220,7 @@ body {
   background-color: #fff;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 0 10px 10px 10px;
+  display: inline-block;
 }
 
 .chat-message-right .chat-message-content {
@@ -261,8 +267,8 @@ body {
 }
 
 .chat-send-button {
-  width: 30px;
-  height: 30px;
+  width: 3.5em;
+  height: 3.5em;
   background-color: #f7f4ff;
   border-radius: 50%;
   font-size: 0.6rem;
@@ -293,4 +299,45 @@ body {
 .developed-by a {
   color: #5e2bf8;
   text-decoration: none;
+}
+
+pre {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+code {
+  font-family: "Courier New", Courier, monospace;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 13px 0;
+  font-size: 0.8rem;
+  text-align: left;
+  overflow-x: auto;
+}
+
+th,
+td {
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
 }
