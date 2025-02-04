@@ -47,6 +47,7 @@ const generateResponse = async (incomingMessageDiv) => {
     if (!response.ok) throw new Error(data.error.message);
     const apiResponse = data.candidates[0].content.parts[0].text;
     messageElement.innerText = apiResponse;
+    messageElement.classList.remove("thinking");
     // Scroll to the bottom of the chat body
     chatBody.scrollTop = chatBody.scrollHeight;
   } catch (error) {

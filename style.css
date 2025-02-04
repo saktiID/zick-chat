@@ -12,8 +12,8 @@ body {
 }
 
 .chat-toggle {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   background-color: #5e2bf8;
   border-radius: 50%;
   display: grid;
@@ -37,8 +37,8 @@ body {
 
 .chat-container {
   visibility: hidden;
-  width: 300px;
-  height: 460px;
+  width: 350px;
+  height: 480px;
   background-color: #fff;
   border-radius: 12px;
   overflow: hidden;
@@ -99,7 +99,7 @@ body {
 }
 
 .chat-subname {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: #dcdcdc;
 }
 
@@ -151,12 +151,12 @@ body {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 0 5px 5px 5px;
   width: max-content;
-  max-width: 90%;
+  max-width: 95%;
 }
 
 .chat-message-content.thinking .dot {
-  width: 5px;
-  height: 5px;
+  width: 7px;
+  height: 7px;
   background-color: #9b9a9a;
   border-radius: 50%;
   animation: pulse 0.8s infinite ease-in-out;
@@ -192,18 +192,18 @@ body {
   display: flex;
   margin: 2px 0 2px 0;
   padding: 12px 7px;
-  font-size: 0.6rem;
+  font-size: 0.85rem;
 }
 
 .chat-message-avatar svg {
-  width: 13px;
+  width: 15px;
   fill: #5e2bf8;
 }
 
 .chat-message-left .chat-message-avatar {
   place-self: flex-start;
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -245,7 +245,7 @@ body {
   border-top: 1px solid #dcdcdc;
   overflow-y: auto;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 0.63rem;
+  font-size: 0.85rem;
   padding-top: 12px;
   padding-bottom: 12px;
   resize: none;
@@ -279,4 +279,18 @@ body {
 
 .chat-send-button:hover {
   background-color: #e3e2f9;
+}
+
+.developed-by {
+  position: fixed;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  color: #bebebe;
+}
+
+.developed-by a {
+  color: #5e2bf8;
+  text-decoration: none;
 }
