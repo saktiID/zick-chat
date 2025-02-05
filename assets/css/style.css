@@ -82,6 +82,14 @@ body {
   z-index: 999;
 }
 
+.chat-container.fullscreen {
+  width: 100%;
+  height: 100vh;
+  bottom: 0;
+  right: 0;
+  border-radius: 0;
+}
+
 .chat-container.show-chat {
   opacity: 1;
   transform: scale(1) translate(0, 0);
@@ -133,6 +141,28 @@ body {
   color: #dcdcdc;
 }
 
+.chat-control {
+  display: flex;
+  margin-left: auto;
+  gap: 7px;
+}
+
+.fullscreen-button {
+  width: 30px;
+  height: 30px;
+  padding: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: #5e2bf8;
+  fill: #fff;
+  cursor: pointer;
+  display: grid;
+}
+
+.fullscreen-button:hover {
+  background-color: #3307f9;
+}
+
 .hide-button {
   width: 30px;
   height: 30px;
@@ -142,7 +172,6 @@ body {
   background-color: #5e2bf8;
   fill: #fff;
   cursor: pointer;
-  margin-left: auto;
   display: grid;
 }
 
