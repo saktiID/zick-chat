@@ -24,6 +24,35 @@ body {
   cursor: pointer;
   border: none;
   z-index: 99;
+  animation: jump-shaking 2s infinite;
+  animation-delay: 2s;
+}
+
+@keyframes jump-shaking {
+  0% {
+    transform: translateX(0);
+  }
+  5% {
+    transform: translateY(-9px);
+  }
+  10% {
+    transform: translateY(-9px) rotate(17deg);
+  }
+  15% {
+    transform: translateY(-9px) rotate(-17deg);
+  }
+  20% {
+    transform: translateY(-9px) rotate(17deg);
+  }
+  25% {
+    transform: translateY(-9px) rotate(-17deg);
+  }
+  40% {
+    transform: translateY(0) rotate(0);
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+  }
 }
 
 .chat-toggle:hover {
@@ -76,6 +105,7 @@ body {
   padding: 10px;
   display: flex;
   align-items: center;
+  border-bottom: solid 1px #dcdcdc;
 }
 
 .chat-avatar {
@@ -113,6 +143,7 @@ body {
   fill: #fff;
   cursor: pointer;
   margin-left: auto;
+  display: grid;
 }
 
 .hide-button:hover {
@@ -198,6 +229,74 @@ body {
   margin: 2px 0 2px 0;
   padding: 12px 7px;
   font-size: 0.85rem;
+  color: #121212;
+}
+
+.chat-message-content h1 {
+  font-size: 1.3rem;
+}
+
+.chat-message-content h2 {
+  font-size: 1.1rem;
+}
+
+.chat-message-content h3 {
+  font-size: 1rem;
+}
+
+.chat-message-content p {
+  margin-bottom: 5px;
+}
+
+.chat-message-content ul,
+.chat-message-content ol {
+  padding-left: 20px !important;
+}
+
+.chat-message-content pre {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.chat-message-content code {
+  font-family: "Courier New", Courier, monospace;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.chat-message-content .table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.chat-message-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 13px 0;
+  font-size: 0.8rem;
+  text-align: left;
+  overflow-x: auto;
+}
+
+.chat-message-content table thead tr th,
+.chat-message-content table tbody tr td {
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+}
+
+.chat-message-content table thead tr th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.chat-message-content table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.chat-message-content table tbody tr:hover {
+  background-color: #f1f1f1;
 }
 
 .chat-message-avatar svg {
@@ -299,45 +398,4 @@ body {
 .developed-by a {
   color: #5e2bf8;
   text-decoration: none;
-}
-
-pre {
-  background-color: #f5f5f5;
-  padding: 10px;
-  border-radius: 5px;
-  overflow-x: auto;
-}
-
-code {
-  font-family: "Courier New", Courier, monospace;
-  padding: 2px 4px;
-  border-radius: 3px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 13px 0;
-  font-size: 0.8rem;
-  text-align: left;
-  overflow-x: auto;
-}
-
-th,
-td {
-  padding: 7px 10px;
-  border: 1px solid #ddd;
-}
-
-th {
-  background-color: #f2f2f2;
-  color: #333;
-}
-
-tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-tr:hover {
-  background-color: #f1f1f1;
 }

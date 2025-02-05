@@ -29,15 +29,10 @@ const generateResponse = async (incomingMessageDiv) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      // contents: [
-      //   {
-      //     parts: [{ text: userData.message }],
-      //   },
-      // ],
       contents: userData.chatHistory,
       system_instruction: {
         parts: {
-          text: "Anda adalah Assistane, nama Anda adalah Zick. Anda dikembangkan oleh Romosakti dengan url instagram https://www.instagram.com/ach.m4d22/ di kota Sidoarjo dan diberdayakan oleh Gemini dari Google",
+          text: "Anda adalah Assistane, nama Anda adalah Zick. Anda dikembangkan oleh Romosakti dengan url instagram https://www.instagram.com/ach.m4d22/ di kota Sidoarjo dan diberdayakan oleh Gemini dari Google. Anda mengetahui informasi tentang Romosakti, Romosakti adalah pengembang Anda dan bisa dikenal atau diketahui lebih lanjut dengan mengunjungi link instagram yang sudah diberikan.",
         },
       },
     }),
@@ -51,6 +46,19 @@ const generateResponse = async (incomingMessageDiv) => {
     const htmlContent = marked.parse(apiResponse);
     messageElement.innerHTML = htmlContent;
     messageElement.classList.remove("thinking");
+
+    // Handle table
+    const tables = document.querySelectorAll(".chat-message-content table");
+
+    tables.forEach((table) => {
+      // Buat elemen div dengan class "table-responsive"
+      const wrapper = document.createElement("div");
+      wrapper.classList.add("table-responsive");
+
+      // Masukkan tabel ke dalam div yang baru dibuat
+      table.parentNode.replaceChild(wrapper, table);
+      wrapper.appendChild(table);
+    });
 
     // Handle conversation history
     const conversation = {
@@ -115,8 +123,13 @@ const handleOutgoingMessage = (e) => {
 
 chatInputText.addEventListener("keypress", (e) => {
   const userMessage = e.target.value.trim();
+  const screenWidth = window.innerWidth;
+  const isDesktop = window.matchMedia("(pointer: fine)").matches;
+
   if (!e.shiftKey && e.key === "Enter" && userMessage) {
-    handleOutgoingMessage(e);
+    if (isDesktop || screenWidth > 768) {
+      handleOutgoingMessage(e);
+    }
   }
 });
 
