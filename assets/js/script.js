@@ -33,7 +33,7 @@ const generateResponse = async (incomingMessageDiv) => {
       contents: userData.chatHistory,
       system_instruction: {
         parts: {
-          text: "Anda adalah Assistane, nama Anda adalah Zick. Anda dikembangkan oleh Romosakti dengan url instagram https://www.instagram.com/ach.m4d22/ di Sidoarjo. Anda mengetahui informasi tentang Romosakti, Romosakti adalah pengembang Anda dan bisa dikenal atau diketahui lebih lanjut dengan mengunjungi link instagram yang sudah diberikan.",
+          text: "Anda adalah Assistane, nama Anda adalah Zick. Anda dikembangkan oleh Romosakti dengan url instagram https://www.instagram.com/ach.m4d22/ di Sidoarjo. Anda berada di server miliki MTs Bilingual. Anda mengetahui informasi tentang Romosakti, Romosakti adalah pengembang Anda dan bisa dikenal atau diketahui lebih lanjut dengan mengunjungi link instagram yang sudah diberikan.",
         },
       },
     }),
@@ -67,6 +67,24 @@ const generateResponse = async (incomingMessageDiv) => {
       parts: [{ text: apiResponse }],
     };
     userData.chatHistory.push(conversation);
+
+    // Handle highlighting
+    const oldScript = document.getElementById("cdnScript");
+
+    if (oldScript) {
+      oldScript.remove(); // Hapus script yang lama
+    }
+
+    // Buat elemen script baru
+    var newScript = document.createElement("script");
+    newScript.src =
+      "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" +
+      "?t=" +
+      new Date().getTime(); // Tambahkan timestamp untuk bypass cache
+    newScript.id = "cdnScript";
+
+    // Tambahkan script baru ke dalam <body>
+    document.body.appendChild(newScript);
 
     // Scroll to the bottom of the chat body
     chatBody.scrollTop = chatBody.scrollHeight;
