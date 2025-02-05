@@ -181,6 +181,7 @@ body {
 
 .chat-messages {
   padding: 5px 10px;
+  padding-inline: 15px;
   height: 75%;
   overflow-y: auto;
   background-color: #fcfaff;
@@ -200,6 +201,10 @@ body {
   width: 90%;
   place-self: flex-end;
   margin: 7px 0 7px 0;
+}
+
+.chat-message-right .chat-message-content {
+  place-self: flex-end;
 }
 
 .chat-message-left .chat-message-content.thinking {
@@ -259,6 +264,8 @@ body {
   padding: 12px 7px;
   font-size: 0.85rem;
   color: #121212;
+  width: max-content;
+  max-width: 95%;
 }
 
 .chat-message-content h1 {
