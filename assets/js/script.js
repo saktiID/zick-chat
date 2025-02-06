@@ -2,16 +2,48 @@ const chatToggle = document.querySelector(".chat-toggle");
 const chatFullscreenBtn = document.querySelector(".fullscreen-button");
 const chatHideBtn = document.querySelector(".hide-button");
 const chatContainer = document.querySelector(".chat-container");
+const chatInputContainer = document.querySelector(".chat-input-container");
 const chatInputText = document.querySelector(".chat-input-text");
 const chatSendBtn = document.querySelector(".chat-send-button");
 const chatBody = document.querySelector(".chat-messages");
+const emojiBtn = document.querySelector("#emoji-button");
+const attachmentsBtn = document.querySelector("#attachment-button");
+const fileUploadWrapper = document.querySelector(".file-upload-wrapper");
+const fileUpload = document.querySelector("#file-upload");
 
-const API_KEY = "AIzaSyA_pbdtH-v_JTmhNitHVO4v89H2S5geQEg";
+const API_KEY = "AIzaSyCciwpJ8p8ShkJ3CbFj0h7eeKdaHTMyoBI";
+// const API_KEY = "AIzaSyA_pbdtH-v_JTmhNitHVO4v89H2S5geQEg";
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 // const API_URL = ` https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${API_KEY}`;
 const userData = {
   message: null,
   chatHistory: [],
+  file: {
+    data: null,
+    mime_type: null,
+  },
+};
+
+const picker = new EmojiMart.Picker({
+  theme: "light",
+  skinTonePosition: "none",
+  previewPosition: "none",
+  onEmojiSelect: (e) => {
+    chatInputText.value += e.native;
+  },
+  onClickOutside: (e) => {
+    if (e.target.id === "emoji-button") {
+      document.body.classList.toggle("show-emoji-picker");
+    } else {
+      document.body.classList.remove("show-emoji-picker");
+    }
+  },
+});
+chatInputContainer.appendChild(picker);
+
+const clearFile = () => {
+  fileUpload.value = "";
+  fileUploadWrapper.classList.remove("show");
 };
 
 const createMessageElement = (messageContent, classes) => {
@@ -76,7 +108,7 @@ const generateResponse = async (incomingMessageDiv) => {
     }
 
     // Buat elemen script baru
-    var newScript = document.createElement("script");
+    const newScript = document.createElement("script");
     newScript.src =
       "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" +
       "?t=" +
@@ -90,14 +122,24 @@ const generateResponse = async (incomingMessageDiv) => {
     chatBody.scrollTop = chatBody.scrollHeight;
   } catch (error) {
     console.error(error);
+    messageElement.classList.remove("thinking");
+    messageElement.innerHTML = `<p>Maaf, sepertinya ada yang salah. Silakan coba lagi.</p> <br> ${error}`;
+    // Scroll to the bottom of the chat body
+    chatBody.scrollTop = chatBody.scrollHeight;
   }
 };
 
 const handleOutgoingMessage = (e) => {
   e.preventDefault();
+  clearFile();
   userData.message = chatInputText.value.trim();
   chatInputText.value = "";
-  const messageContent = `<div class="chat-message-content"></div>`;
+  const messageContent = `<div class="chat-message-content"></div> 
+  ${
+    userData.file.data
+      ? ` <img class="chat-attachment" src="data:${userData.file.mime_type};base64,${userData.file.data}" />`
+      : ""
+  }`;
   const outgoingMessageDiv = createMessageElement(messageContent, "chat-message-right");
   outgoingMessageDiv.querySelector(".chat-message-content").textContent = userData.message;
   chatBody.appendChild(outgoingMessageDiv);
@@ -105,9 +147,18 @@ const handleOutgoingMessage = (e) => {
   // Handle conversation history
   const conversation = {
     role: "user",
-    parts: [{ text: userData.message }],
+    parts: [
+      { text: userData.message },
+      ...(userData.file.data ? [{ inline_data: userData.file }] : []),
+    ],
   };
   userData.chatHistory.push(conversation);
+
+  // Handle file history
+  userData.file = {
+    data: null,
+    mime_type: null,
+  };
 
   // Handle overload conversation
   if (userData.chatHistory.length > 30) {
@@ -171,4 +222,49 @@ chatFullscreenBtn.addEventListener("click", () => {
   } else {
     chatFullscreenBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M200 32L56 32C42.7 32 32 42.7 32 56l0 144c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l40-40 79 79-79 79L73 295c-6.9-6.9-17.2-8.9-26.2-5.2S32 302.3 32 312l0 144c0 13.3 10.7 24 24 24l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-40-40 79-79 79 79-40 40c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8l144 0c13.3 0 24-10.7 24-24l0-144c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2l-40 40-79-79 79-79 40 40c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2l0-144c0-13.3-10.7-24-24-24L312 32c-9.7 0-18.5 5.8-22.2 14.8s-1.7 19.3 5.2 26.2l40 40-79 79-79-79 40-40c6.9-6.9 8.9-17.2 5.2-26.2S209.7 32 200 32z"/></svg>`;
   }
+});
+
+attachmentsBtn.addEventListener("click", () => {
+  fileUpload.click();
+});
+
+fileUpload.addEventListener("change", () => {
+  const file = fileUpload.files[0];
+  if (!file) return;
+
+  const old = fileUploadWrapper.querySelector("img.attachment");
+  if (old) old.remove();
+
+  fileUploadWrapper.classList.add("show");
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const base64String = e.target.result.split(",")[1];
+    userData.file = {
+      data: base64String,
+      mime_type: file.type,
+    };
+
+    console.log(userData.file);
+
+    const img = document.createElement("img");
+    img.src = e.target.result;
+    img.classList.add("attachment");
+    fileUploadWrapper.appendChild(img);
+
+    const deleteAttachmentBtn = document.createElement("button");
+    deleteAttachmentBtn.classList.add("delete-attachment");
+    deleteAttachmentBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z"/></svg>`;
+    deleteAttachmentBtn.addEventListener("click", () => {
+      img.remove();
+      deleteAttachmentBtn.remove();
+      clearFile();
+      userData.file = {
+        data: null,
+        mime_type: null,
+      };
+    });
+    fileUploadWrapper.appendChild(deleteAttachmentBtn);
+  };
+  reader.readAsDataURL(file);
 });

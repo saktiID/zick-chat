@@ -144,29 +144,14 @@ body {
 .chat-control {
   display: flex;
   margin-left: auto;
-  gap: 7px;
+  gap: 5px;
 }
 
-.fullscreen-button {
-  width: 30px;
-  height: 30px;
-  padding: 8px;
-  border-radius: 50%;
-  border: none;
-  background-color: #5e2bf8;
-  fill: #fff;
-  cursor: pointer;
-  display: grid;
-}
-
-.fullscreen-button:hover {
-  background-color: #3307f9;
-}
-
+.fullscreen-button,
 .hide-button {
-  width: 30px;
-  height: 30px;
-  padding: 8px;
+  width: 40px;
+  height: 40px;
+  padding: 12px;
   border-radius: 50%;
   border: none;
   background-color: #5e2bf8;
@@ -175,6 +160,7 @@ body {
   display: grid;
 }
 
+.fullscreen-button:hover,
 .hide-button:hover {
   background-color: #3307f9;
 }
@@ -182,9 +168,17 @@ body {
 .chat-messages {
   padding: 5px 10px;
   padding-inline: 15px;
-  height: 75%;
+  height: 69%;
   overflow-y: auto;
   background-color: #fcfaff;
+}
+
+.chat-attachment {
+  place-self: flex-end;
+  width: 150px;
+  background-color: #5e2bf8;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 10px 0 10px 10px;
 }
 
 .chat-message-left {
@@ -367,11 +361,12 @@ body {
 }
 
 .chat-input-container {
-  height: 12.5%;
+  height: 15%;
   width: 100%;
-  position: absolute;
-  bottom: 0;
   display: flex;
+  border-top: 1px solid #dcdcdc;
+  padding-top: 3px;
+  position: relative;
 }
 
 .chat-input-container:valid .chat-button-container .chat-send-button {
@@ -381,10 +376,9 @@ body {
 .chat-input-text {
   width: 100%;
   height: 100%;
-  padding: 3px 10px;
+  padding: 0 10px;
   border: none;
   outline: none;
-  border-top: 1px solid #dcdcdc;
   overflow-y: auto;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 0.85rem;
@@ -395,44 +389,114 @@ body {
 
 .chat-button-container {
   display: flex;
-  align-items: center;
+  padding-top: 7px;
   padding-inline: 10px;
   height: 100%;
-  border-top: 1px solid #dcdcdc;
-  background-color: #fff;
+  gap: 2px;
 }
-
+.chat-attachment-button,
+.chat-emoji-button,
 .chat-send-button {
-  width: 3.5em;
-  height: 3.5em;
-  background-color: #f7f4ff;
+  width: 3.3em;
+  height: 3.3em;
+  background-color: transparent;
   border-radius: 50%;
   font-size: 0.6rem;
   border: none;
   outline: none;
   cursor: pointer;
-  display: none;
 }
 
+.chat-send-button {
+  display: none;
+  background-color: #5e2bf8;
+}
+
+.chat-attachment-button svg,
+.chat-emoji-button svg,
 .chat-send-button svg {
   width: 13px;
   fill: #5e2bf8;
+  pointer-events: none;
+}
+
+.chat-send-button svg {
+  fill: #fff;
 }
 
 .chat-send-button:hover {
-  background-color: #e3e2f9;
+  background-color: #3307f9;
+}
+
+.chat-attachment-button:hover,
+.chat-emoji-button:hover {
+  background-color: #e4ddff;
+}
+
+.chat-input-container .file-upload-wrapper {
+  display: none;
+}
+
+.chat-input-container .file-upload-wrapper.show {
+  display: block;
+  position: absolute;
+  text-align: center;
+  top: -170px;
+  width: 100%;
+  height: 165px;
+  padding: 7px;
+  background-color: #fff;
+}
+
+.chat-input-container .file-upload-wrapper .delete-attachment {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border-radius: 50%;
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.file-upload-wrapper .delete-attachment:hover {
+  background-color: #e4ddff;
+}
+
+.file-upload-wrapper .delete-attachment svg {
+  width: 12px;
+  fill: #5e2bf8;
+}
+
+.chat-input-container .file-upload-wrapper .attachment {
+  width: 150px;
+  height: 150px;
 }
 
 .developed-by {
-  position: fixed;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
   font-size: 0.6rem;
-  color: #bebebe;
+  color: #858585;
+  text-align: center;
+  padding-top: 2px;
 }
 
 .developed-by a {
   color: #5e2bf8;
   text-decoration: none;
+}
+
+em-emoji-picker {
+  position: absolute;
+  top: -395px;
+  right: -20px;
+  transform-origin: center center;
+  transform: scale(0.8);
+  visibility: hidden;
+}
+
+body.show-emoji-picker em-emoji-picker {
+  visibility: visible;
 }
