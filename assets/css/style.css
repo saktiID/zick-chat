@@ -472,7 +472,7 @@ body {
 }
 
 .chat-input-container .file-upload-wrapper .attachment {
-  width: 150px;
+  max-width: 320px;
   height: 150px;
 }
 
