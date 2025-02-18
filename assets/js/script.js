@@ -10,11 +10,12 @@ const emojiBtn = document.querySelector("#emoji-button");
 const attachmentsBtn = document.querySelector("#attachment-button");
 const fileUploadWrapper = document.querySelector(".file-upload-wrapper");
 const fileUpload = document.querySelector("#file-upload");
+const scrollButton = document.querySelector(".scroll-down");
 
 const API_KEY = "AIzaSyCciwpJ8p8ShkJ3CbFj0h7eeKdaHTMyoBI";
 // const API_KEY = "AIzaSyA_pbdtH-v_JTmhNitHVO4v89H2S5geQEg";
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-// const API_URL = ` https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${API_KEY}`;
+// const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+const API_URL = ` https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${API_KEY}`;
 const userData = {
   message: null,
   chatHistory: [],
@@ -40,6 +41,20 @@ const picker = new EmojiMart.Picker({
   },
 });
 chatInputContainer.appendChild(picker);
+
+const checkScroll = () => {
+  const scrollPos = chatBody.scrollTop + chatBody.clientHeight;
+  const nearBottom = chatBody.scrollHeight - scrollPos > 20;
+  if (nearBottom) {
+    scrollButton.classList.remove("hide"); // Tampilkan jika agak jauh dari bawah
+  } else {
+    scrollButton.classList.add("hide"); // Sembunyikan tombol jika dekat bawah
+  }
+};
+
+const observer = new MutationObserver(() => {
+  checkScroll(); // Cek scroll setiap ada perubahan konten
+});
 
 const clearFile = () => {
   fileUpload.value = "";
@@ -72,54 +87,138 @@ const generateResponse = async (incomingMessageDiv) => {
   };
 
   try {
-    const response = await fetch(API_URL, requestOptions);
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error.message);
-    const apiResponse = data.candidates[0].content.parts[0].text;
-    const htmlContent = marked.parse(apiResponse);
-    messageElement.innerHTML = htmlContent;
-    messageElement.classList.remove("thinking");
+    const response = await fetch(API_URL, requestOptions).then((response) => {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let apiResponse = "";
 
-    // Handle table
-    const tables = document.querySelectorAll(".chat-message-content table");
+      function readChunk() {
+        return reader.read().then(({ done, value }) => {
+          if (done) return; // Berhenti jika selesai
 
-    tables.forEach((table) => {
-      // Buat elemen div dengan class "table-responsive"
-      const wrapper = document.createElement("div");
-      wrapper.classList.add("table-responsive");
+          const text = decoder.decode(value, { stream: true }); // Decode chunk
+          const lines = text.split("\n"); // Pisahkan berdasarkan newline
 
-      // Masukkan tabel ke dalam div yang baru dibuat
-      table.parentNode.replaceChild(wrapper, table);
-      wrapper.appendChild(table);
+          lines.forEach((line) => {
+            if (line.startsWith("data: ")) {
+              const jsonText = line.replace(/^data:\s*/, ""); // Hapus prefix "data: "
+              try {
+                const jsonData = JSON.parse(jsonText);
+                const content = jsonData.candidates[0]?.content?.parts[0]?.text || "";
+                const isDone = jsonData.candidates[0]?.finishReason === "STOP" || false;
+                extractResponse(content, isDone);
+              } catch (error) {
+                console.error("Error parsing JSON:", error);
+              }
+            }
+          });
+
+          return readChunk(); // Lanjutkan membaca chunk berikutnya
+        });
+      }
+
+      function extractResponse(content, isDone) {
+        messageElement.classList.remove("thinking");
+        apiResponse += content;
+        if (isDone) {
+          const conversation = {
+            role: "model",
+            parts: [{ text: apiResponse }],
+          };
+          userData.chatHistory.push(conversation);
+          messageElement.innerHTML = marked.parse(apiResponse);
+          // Handle table
+          const tables = document.querySelectorAll(".chat-message-content table");
+
+          tables.forEach((table) => {
+            // Buat elemen div dengan class "table-responsive"
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("table-responsive");
+
+            // Masukkan tabel ke dalam div yang baru dibuat
+            table.parentNode.replaceChild(wrapper, table);
+            wrapper.appendChild(table);
+          });
+
+          // Handle highlighting
+          const oldScript = document.getElementById("cdnScript");
+
+          if (oldScript) {
+            oldScript.remove(); // Hapus script yang lama
+          }
+
+          // Buat elemen script baru
+          const newScript = document.createElement("script");
+          newScript.src =
+            "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" +
+            "?t=" +
+            new Date().getTime(); // Tambahkan timestamp untuk bypass cache
+          newScript.id = "cdnScript";
+
+          // Tambahkan script baru ke dalam <body>
+          document.body.appendChild(newScript);
+
+          // Scroll to the bottom of the chat body
+          chatBody.scrollTop = chatBody.scrollHeight;
+
+          return;
+        }
+        // Scroll to the bottom of the chat body
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Insert the content
+        messageElement.innerHTML += content;
+      }
+
+      return readChunk();
     });
 
+    // if (!response.ok) throw new Error(data.error.message);
+    // const apiResponse = data.candidates[0].content.parts[0].text;
+    // const htmlContent = marked.parse(apiResponse);
+    // messageElement.innerHTML = htmlContent;
+    // messageElement.classList.remove("thinking");
+
+    // Handle table
+    // const tables = document.querySelectorAll(".chat-message-content table");
+
+    // tables.forEach((table) => {
+    // Buat elemen div dengan class "table-responsive"
+    // const wrapper = document.createElement("div");
+    // wrapper.classList.add("table-responsive");
+
+    // Masukkan tabel ke dalam div yang baru dibuat
+    // table.parentNode.replaceChild(wrapper, table);
+    // wrapper.appendChild(table);
+    // });
+
     // Handle conversation history
-    const conversation = {
-      role: "model",
-      parts: [{ text: apiResponse }],
-    };
-    userData.chatHistory.push(conversation);
+    // const conversation = {
+    //   role: "model",
+    //   parts: [{ text: apiResponse }],
+    // };
+    // userData.chatHistory.push(conversation);
 
     // Handle highlighting
-    const oldScript = document.getElementById("cdnScript");
+    // const oldScript = document.getElementById("cdnScript");
 
-    if (oldScript) {
-      oldScript.remove(); // Hapus script yang lama
-    }
+    // if (oldScript) {
+    //   oldScript.remove(); // Hapus script yang lama
+    // }
 
     // Buat elemen script baru
-    const newScript = document.createElement("script");
-    newScript.src =
-      "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" +
-      "?t=" +
-      new Date().getTime(); // Tambahkan timestamp untuk bypass cache
-    newScript.id = "cdnScript";
+    // const newScript = document.createElement("script");
+    // newScript.src =
+    //   "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" +
+    //   "?t=" +
+    //   new Date().getTime(); // Tambahkan timestamp untuk bypass cache
+    // newScript.id = "cdnScript";
 
     // Tambahkan script baru ke dalam <body>
-    document.body.appendChild(newScript);
+    // document.body.appendChild(newScript);
 
     // Scroll to the bottom of the chat body
-    chatBody.scrollTop = chatBody.scrollHeight;
+    // chatBody.scrollTop = chatBody.scrollHeight;
   } catch (error) {
     console.error(error);
     messageElement.classList.remove("thinking");
@@ -190,6 +289,12 @@ const handleOutgoingMessage = (e) => {
   // Scroll to the bottom of the chat body
   chatBody.scrollTop = chatBody.scrollHeight;
 };
+
+chatBody.addEventListener("scroll", checkScroll);
+observer.observe(chatBody, { childList: true, subtree: true });
+scrollButton.addEventListener("click", () => {
+  chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" });
+});
 
 chatInputText.addEventListener("keypress", (e) => {
   const userMessage = e.target.value.trim();

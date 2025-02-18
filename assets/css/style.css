@@ -90,6 +90,12 @@ body {
   border-radius: 0;
 }
 
+.chat-container.fullscreen .chat-header,
+.chat-container.fullscreen .chat-messages,
+.chat-container.fullscreen .chat-input-container {
+  padding-inline: 15%;
+}
+
 .chat-container.show-chat {
   opacity: 1;
   transform: scale(1) translate(0, 0);
@@ -171,6 +177,42 @@ body {
   height: 69%;
   overflow-y: auto;
   background-color: #fcfaff;
+  position: relative;
+}
+
+.chat-messages .scroll-down {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(
+    90deg,
+    rgb(57, 52, 157) 0%,
+    rgb(45, 45, 173) 35%,
+    rgb(0, 64, 255) 100%
+  );
+  border-radius: 50%;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  place-content: center;
+  position: fixed;
+  bottom: 20%;
+  right: 50%;
+  z-index: 99;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.chat-messages .scroll-down.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chat-messages .scroll-down:hover {
+  background: #3307f9;
+}
+
+.chat-messages .scroll-down svg {
+  width: 12px;
+  fill: #fff;
 }
 
 .chat-attachment {
@@ -184,7 +226,7 @@ body {
 .chat-message-left {
   display: flex;
   flex-direction: column;
-  max-width: 90%;
+  max-width: 100%;
   place-self: flex-start;
   margin: 5px 0 5px 0;
 }
@@ -442,6 +484,7 @@ body {
   position: absolute;
   text-align: center;
   top: -170px;
+  left: 0;
   width: 100%;
   height: 165px;
   padding: 7px;
