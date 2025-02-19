@@ -182,6 +182,10 @@ p.chat-p {
   padding-inline: 15%;
 }
 
+.chat-container.fullscreen .chat-messages div .chat-message-content {
+  padding-inline: 20px;
+}
+
 .chat-container.show-chat {
   opacity: 1;
   transform: scale(1) translate(0, 0);
@@ -195,6 +199,12 @@ p.chat-p {
     width: 100%;
     height: 100vh;
     border-radius: 0;
+  }
+
+  .chat-container.fullscreen .chat-header,
+  .chat-container.fullscreen .chat-messages,
+  .chat-container.fullscreen .chat-input-container {
+    padding-inline: 5%;
   }
 }
 
@@ -316,6 +326,42 @@ p.chat-p {
   max-width: 100%;
   place-self: flex-start;
   margin: 5px 0 5px 0;
+}
+
+.chat-message-left:last-child {
+  margin-bottom: 90px;
+}
+
+.chat-message-left:last-child .chat-message-content > :last-child {
+  position: relative;
+  display: inline;
+}
+
+span#chunk {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  background-color: var(--dark-color);
+  border-radius: 50%;
+  animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .chat-message-right {

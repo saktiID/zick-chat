@@ -119,6 +119,10 @@ const generateResponse = async (incomingMessageDiv) => {
 
       function extractResponse(content, isDone) {
         messageElement.classList.remove("thinking");
+        const chunk = messageElement.querySelector("#chunk");
+        if (chunk) {
+          chunk.remove();
+        }
         apiResponse += content;
         if (isDone) {
           const conversation = {
@@ -167,7 +171,7 @@ const generateResponse = async (incomingMessageDiv) => {
         chatBody.scrollTop = chatBody.scrollHeight;
 
         // Insert the content
-        messageElement.innerHTML += content;
+        messageElement.innerHTML += content + "<span id='chunk'></span>";
       }
 
       return readChunk();
