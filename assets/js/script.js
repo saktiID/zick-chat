@@ -153,10 +153,7 @@ const generateResponse = async (incomingMessageDiv) => {
 
           // Buat elemen script baru
           const newScript = document.createElement("script");
-          newScript.src =
-            "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" +
-            "?t=" +
-            new Date().getTime(); // Tambahkan timestamp untuk bypass cache
+          newScript.src = "assets/package/prismjs/prism.js";
           newScript.id = "cdnScript";
 
           // Tambahkan script baru ke dalam <body>
