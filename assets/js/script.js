@@ -44,7 +44,7 @@ chatInputContainer.appendChild(picker);
 
 const checkScroll = () => {
   const scrollPos = chatBody.scrollTop + chatBody.clientHeight;
-  const nearBottom = chatBody.scrollHeight - scrollPos > 20;
+  const nearBottom = chatBody.scrollHeight - scrollPos > 100;
   if (nearBottom) {
     scrollButton.classList.remove("hide"); // Tampilkan jika agak jauh dari bawah
   } else {
